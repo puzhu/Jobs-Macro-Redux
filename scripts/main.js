@@ -6,8 +6,8 @@ To-Dos: 1.
 */
   //CREATE CHARTING VARIABLES
 //Creating the SVG using margin convention(source: http://bl.ocks.org/mbostock/3019563)
-function createSVG(id, margin, padding) { //plotVar, margin, padding
-  var outerWidth = d3.select(id).node().clientWidth,
+const createSVG = (id, margin, padding) => {
+  const outerWidth = d3.select(id).node().clientWidth,
       outerHeight = d3.select(id).node().clientHeight,
       innerWidth = outerWidth - margin.left - margin.right,
       innerHeight = outerHeight - margin.top -margin.bottom,
@@ -18,18 +18,18 @@ function createSVG(id, margin, padding) { //plotVar, margin, padding
       .attr('height', outerHeight)
       .append('g')
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-      var xScale = d3.scaleLinear()
+      const xScale = d3.scaleLinear()
           .range([0, width]);
-      var yScale = d3.scaleLinear()
+      const yScale = d3.scaleLinear()
           .range([height, 0]);
-      var svgProps = {width: width, height: height, plotVar: plotVar, xScale: xScale, yScale: yScale}
+      const svgProps = {width: width, height: height, plotVar: plotVar, xScale: xScale, yScale: yScale}
 
   return svgProps
 }
 
         //DATA MANIPULATION HELPERS
 //Convert strings to numbers
-function deString(d) {
+const deString = (d) => {
     if (d === "") {
         return NaN;
     } else {
@@ -38,9 +38,9 @@ function deString(d) {
 }
 
 //Create a unique array (use map)
-var unique = function(xs) {
-    var seen = {}
-    return xs.filter(function(x) {
+const unique = (xs) => {
+    let seen = {}
+    return xs.filter((x) => {
         if (seen[x])
             return
         seen[x] = true
@@ -49,15 +49,15 @@ var unique = function(xs) {
 }
 
 // Round to decimals
-function round(value, decimals) {
+const round = (value, decimals) => {
   return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
 }
 
 
 //get the data filtered based on input parameters
-function calcVizAllGrData(data, startYear, endYear, xVar, yVar){
-	var array = [];
-	var tempData = data.filter(function(d) {
+const calcVizAllGrData = (data, startYear, endYear, xVar, yVar) => {
+	const array = [];
+	const tempData = data.filter(function(d) {
 			return d.year >= startYear && d.year <= endYear && !isNaN(d[yVar]) && !isNaN(d[xVar]);
 	})
 	tempData.forEach(function(d) {
@@ -82,15 +82,15 @@ function calcVizAllGrData(data, startYear, endYear, xVar, yVar){
 }
 
 //Remove outliers
-function removeOutliers(data) {
-  var yDeviation = d3.deviation(data, function(d) {return d.yVarRate}) * 2.5;
-  var xDeviation = d3.deviation(data, function(d) {return d.xVarRate}) * 2.5;
+const removeOutliers = (data) => {
+  const yDeviation = d3.deviation(data, function(d) {return d.yVarRate}) * 2.5;
+  const xDeviation = d3.deviation(data, function(d) {return d.xVarRate}) * 2.5;
   return data.filter(function(d) {return d.yVarRate < yDeviation && d.yVarRate > -yDeviation && d.xVarRate < xDeviation && d.xVarRate > -xDeviation})
 }
 
         //MAP CONTROLS TO DATA VARIABLES
 // Create global variables to map html inputs to data and to update titles
-var countryClassMap = {
+const countryClassMap = {
   defaultCountryClass: {
     'All Countries': "W"
   },
@@ -127,26 +127,26 @@ var countryClassMap = {
   }
 }
 
-var xProdVarKey = {
+const xProdVarKey = {
   "Total Productivity (per year growth)": "prodTot",
   "Agricultural Productivity (per year growth)": "prodAg",
   "Industrial Productivity (per year growth)": "prodInd",
   "Services Productivity (per year growth)": "prodServ"
 }
-var yEmpVarKey = {
+const yEmpVarKey = {
   "Total Productivity (per year growth)": "empTot",
   "Agricultural Productivity (per year growth)": "empAg",
   "Industrial Productivity (per year growth)": "empInd",
   "Services Productivity (per year growth)": "empServ"
 }
 
-var prodTitleKey = {
+const prodTitleKey = {
   "Total Productivity (per year growth)": "Total Productivity",
   "Agricultural Productivity (per year growth)": "Ag. Productivity",
   "Industrial Productivity (per year growth)": "Ind. Productivity",
   "Services Productivity (per year growth)": "Serv. Productivity"
 }
-var empTitleKey = {
+const empTitleKey = {
   "Total Productivity (per year growth)": "Total Employment",
   "Agricultural Productivity (per year growth)": "Ag. Employment",
   "Industrial Productivity (per year growth)": "Ind. Employment",
@@ -155,14 +155,14 @@ var empTitleKey = {
 
         //FUNCTIONS TO EXTEND D3 FUNCTIONALITY
 // Extend D3 to move elements to the front/background
-d3.selection.prototype.moveToFront = function() {
-    return this.each(function() {
+d3.selection.prototype.moveToFront = () => {
+    return this.each(() => {
         this.parentNode.appendChild(this);
     });
 };
-d3.selection.prototype.moveToBack = function() {
-    return this.each(function() {
-        var firstChild = this.parentNode.firstChild;
+d3.selection.prototype.moveToBack = () => {
+    return this.each(() => {
+        const firstChild = this.parentNode.firstChild;
         if (firstChild) {
             this.parentNode.insertBefore(this, firstChild);
         }
@@ -172,15 +172,15 @@ d3.selection.prototype.moveToBack = function() {
         // DATA PROCESSING FUNCTIONS FOR INITIAL LOAD
 // process the country gdp and productivity csv
 
-function generateDropDown(empData, prodData) {
+const generateDropDown = (empData, prodData) => {
 
 	//generate the unique list of values.
-  var empListVals = empData.map(function(d) { return d.country; })
-  var prodListVals = prodData.map(function(d) { return d.country; })
-  var listVals = unique(empListVals.concat(prodListVals)).sort()
+  const empListVals = empData.map(function(d) { return d.country; })
+  const prodListVals = prodData.map(function(d) { return d.country; })
+  const listVals = unique(empListVals.concat(prodListVals)).sort()
 
   // var listVals = unique(data.map(function(d) { return d.country; })).sort()
-  var listData = [{id: "None", text: "None"}];
+  const listData = [{id: "None", text: "None"}];
 
   listVals.forEach(function(d) {
     listData.push({
@@ -195,8 +195,8 @@ function generateDropDown(empData, prodData) {
   $("#countryList").select2('val', "None");
 }
 
-function processScatterData(data) {
-    var array = {
+const processScatterData = (data) => {
+    const array = {
         country: data.country,
         year: deString(data.year),
         region: data.region,
@@ -219,8 +219,8 @@ function processScatterData(data) {
 }
 
 // process the world gdp per cap data for the brush
-function processallBrushData(data) {
-    var array = {
+const processallBrushData = (data) => {
+    const array = {
         countryGroup: data.countryGroup,
         year: new Date(deString(data.year), 1, 1),
         gdpPc: deString(data.gdpPerCap)
@@ -229,8 +229,8 @@ function processallBrushData(data) {
 }
 
 //process country countryClassification
-function processCountryClass(data) {
-  var array = {
+const processCountryClass = (data) => {
+  const array = {
     country: data.country,
     year: new Date(deString(data.year), 1, 1),
     classification: data.type
@@ -245,16 +245,18 @@ function processCountryClass(data) {
 SECTION 2: LOAD THE DATA FILES AND PROCESS THEM
 #################################################
 */
+const ready = (error, dataAll, allBrushData) => {
+    draw(dataAll, allBrushData);
+}
+
 d3.queue()
     .defer(d3.csv, "data/allGrData.csv", processScatterData)
     .defer(d3.csv, "data/gdpPerCapData.csv", processallBrushData)
     .await(ready);
 
-function ready(error, dataAll, allBrushData) {
-    draw(dataAll, allBrushData);
-}
 
-function draw(dataAll, allBrushData) {
+
+const draw = (dataAll, allBrushData) => {
 
   /*
   #################################################
@@ -262,23 +264,24 @@ function draw(dataAll, allBrushData) {
   #################################################
   */
   //Identify the start year and end year of the data (the two dates should never be updated)
-  var startYear = d3.min(dataAll, function(d) {
-      return d.year;
-  })
-  var endYear = d3.max(dataAll, function(d) {
+  const startYear = d3.min(dataAll, function(d) {
       return d.year;
   })
 
-  var yearDomainRange = [new Date(startYear, 1, 1), new Date(endYear, 1, 1)] //updated through brush events
+  const endYear = d3.max(dataAll, function(d) {
+      return d.year;
+  })
+
+  let yearDomainRange = [new Date(startYear, 1, 1), new Date(endYear, 1, 1)] //updated through brush events
 
   //Selected x variable for productivity
-  var selProdXVar = document.getElementById('xProdDropDown');
-  var currentProdX = xProdVarKey[selProdXVar.options[selProdXVar.selectedIndex].value];
-  var currentProdY = 'gdp'
+  let selProdXVar = document.getElementById('xProdDropDown');
+  let currentProdX = xProdVarKey[selProdXVar.options[selProdXVar.selectedIndex].value];
+  let currentProdY = 'gdp'
 
   //Selected x variable for employment
-  var selEmpXVar = document.getElementById('xEmpDropDown');
-  var currentEmpX;
+  let selEmpXVar = document.getElementById('xEmpDropDown');
+  let currentEmpX;
 
   if (selEmpXVar.options[selEmpXVar.selectedIndex].value === "Productivity (per year growth)") {
     currentEmpX = currentProdX
@@ -286,18 +289,18 @@ function draw(dataAll, allBrushData) {
     currentEmpX = currentProdY
   }
   // Selected y variable for the employment chart
-  var currentEmpY = yEmpVarKey[selProdXVar.options[selProdXVar.selectedIndex].value];
+  let currentEmpY = yEmpVarKey[selProdXVar.options[selProdXVar.selectedIndex].value];
 
   //Selected country grouping (update this when there is a change in the selection)
-  var varType = "defaultCountryClass"
-  var currentCountryGroup = "W";
+  let varType = "defaultCountryClass"
+  let currentCountryGroup = "W";
 
   // incomeClassKey[selCountryGroup.options[selCountryGroup.selectedIndex].value];
 
   //Create the datasets for charting
-  var prodData = (calcVizAllGrData(dataAll, startYear, endYear, currentProdX, currentProdY));
-  var empData = (calcVizAllGrData(dataAll, startYear, endYear, currentEmpX, currentEmpY));
-  var currBrushData = allBrushData.filter(function(d) {return d.countryGroup === currentCountryGroup;});
+  let prodData = (calcVizAllGrData(dataAll, startYear, endYear, currentProdX, currentProdY));
+  let empData = (calcVizAllGrData(dataAll, startYear, endYear, currentEmpX, currentEmpY));
+  let currBrushData = allBrushData.filter(function(d) {return d.countryGroup === currentCountryGroup;});
   generateDropDown(empData, prodData)
   /*
   #################################################
@@ -307,7 +310,7 @@ function draw(dataAll, allBrushData) {
   */
         //PRODUCTIVITY CHART
   //Creating the svg
-  var prodChartVars = createSVG('#prodChart', margin = {top: 5, right: 5, bottom: 0, left: 40}, padding = {top: 5, right: 15, bottom: 2, left: 2}),
+  const prodChartVars = createSVG('#prodChart', margin = {top: 5, right: 5, bottom: 0, left: 40}, padding = {top: 5, right: 15, bottom: 2, left: 2}),
       prodWidth = prodChartVars.width,
       prodHeight = prodChartVars.height,
       prodPlot = prodChartVars.plotVar,
@@ -318,7 +321,7 @@ function draw(dataAll, allBrushData) {
 
         //EMPLOYMENT CHART
   //Creating the svg
-  var empChartVars = createSVG('#empChart', margin = {top: 5, right: 5, bottom: 0, left: 40}, padding = {top: 5, right: 2, bottom: 2, left: 15}),
+  const empChartVars = createSVG('#empChart', margin = {top: 5, right: 5, bottom: 0, left: 40}, padding = {top: 5, right: 2, bottom: 2, left: 15}),
       empWidth = empChartVars.width,
       empHeight = empChartVars.height,
       empPlot = empChartVars.plotVar,
@@ -328,7 +331,7 @@ function draw(dataAll, allBrushData) {
   empChartVars.plotVar.attr("id", "empChartSVG")
 
   // Creating the tool tip for both the scatter plots
-  var toolTip = d3.tip()
+  const toolTip = d3.tip()
     .attr('class', 'd3-tip')
     .attr('id', 'popUp')
     .offset([10, 5])
@@ -630,7 +633,7 @@ function draw(dataAll, allBrushData) {
       } else {
         // Hide or show scatterCircles based on the start and end year of the brush
         d3.selectAll('.dots').filter(function(d) { return d.year > yearDomainRange[0].getFullYear() && d.year <= yearDomainRange[1].getFullYear()}).classed('default', false).classed('selected', true).attr('fill', fillColour).moveToFront();
-        d3.selectAll('.dots').filter(function(d) { return d.year <= yearDomainRange[0].getFullYear() || d.year > yearDomainRange[1].getFullYear()}).classed('selected', false).classed('default', true).moveToBack();
+        d3.selectAll('.dots').filter(function(d) { return d.year <= yearDomainRange[0].getFullYear() || d.year > yearDomainRange[1].getFullYear()}).classed('selected', false).classed('default', true).lower();
 
         // Draw a temparory regression line for each brush end event
         tempProdData = prodData.filter(function(d) {return d.year > yearDomainRange[0].getFullYear() && d.year <= yearDomainRange[1].getFullYear()})
@@ -645,7 +648,7 @@ function draw(dataAll, allBrushData) {
     } else {
       // Hide or show scatterCircles based on the start and end year of the brush
       d3.selectAll('.dots').filter(function(d) { return d.year > yearDomainRange[0].getFullYear() && d.year <= yearDomainRange[1].getFullYear() && d[varType] === currentCountryGroup}).classed('default', false).classed('selected', true).attr('fill', fillColour).moveToFront()
-      d3.selectAll('.dots').filter(function(d) { return d.year <= yearDomainRange[0].getFullYear() || d.year > yearDomainRange[1].getFullYear() || d[varType] !== currentCountryGroup} ).classed('selected', false).classed('default', true).moveToBack();
+      d3.selectAll('.dots').filter(function(d) { return d.year <= yearDomainRange[0].getFullYear() || d.year > yearDomainRange[1].getFullYear() || d[varType] !== currentCountryGroup} ).classed('selected', false).classed('default', true).lower();
 
 
 
@@ -707,8 +710,8 @@ function draw(dataAll, allBrushData) {
       }
 
       function mouseoverDots(d){
-        d3.selectAll('.dots').filter(function(e) {return e.country === d.country}).classed('default', false).classed('selected', true).attr('fill', fillColour).moveToFront()
-        d3.selectAll('.dots').filter(function(e) {return e.country != d.country}).classed('selected', false).classed('default', true).moveToBack()
+        d3.selectAll('.dots').filter(function(e) {return e.country === d.country}).classed('default', false).classed('selected', true).attr('fill', fillColour).raise()
+        d3.selectAll('.dots').filter(function(e) {return e.country != d.country}).classed('selected', false).classed('default', true).lower()
         if(varType === 'prod'){
           toolTip.html(function(d) {return "<strong>Country:</strong> <span style='color:silver'>" + d.country + "</span>" + "<br>" +
             "<strong>Year:</strong> <span style='color:silver'>" + d.year + "</span>" + "<br>" +
@@ -734,7 +737,7 @@ function draw(dataAll, allBrushData) {
         toolTip.hide(d)
       }
 
-      d3.selectAll('.tick').selectAll('text').moveToFront()
+      d3.selectAll('.tick').selectAll('text').raise()
   }
 }
 
@@ -769,13 +772,13 @@ function drawScatterAxis(data, plotVar, xScale, yScale, width, height, varType) 
   plotVar.append('g')
       .call(yAxis)
       .attr('class', 'y--scatterAxis '+ className)
-      .moveToFront()
+      .raise()
 
   plotVar.append('g')
       .call(xAxis)
       .attr('transform', 'translate(0,' + yScale(0) + ")")
       .attr('class', 'x--scatterAxis ' + className)
-      .moveToFront()
+      .lower()
 
   // Draw the labels
   var yAxisText;
@@ -824,7 +827,7 @@ function nObs(data, plotVar, width, height, varType) {
         .attr('dy', -2)
         .text(nObsText)
         .attr('class', 'obsText '+ obsClass)
-        .moveToFront();
+        .raise();
 
   plotVar.append('g')
         .append('text')
@@ -833,7 +836,7 @@ function nObs(data, plotVar, width, height, varType) {
         .attr('dy', -14)
         .text(uniqueText)
         .attr('class', 'obsText '+ obsClass)
-        .moveToFront();
+        .raise();
 }
 
 
